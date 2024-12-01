@@ -5,7 +5,7 @@ public your IP address to your own domain name.
 
 ## Prerequisites
 
-1. Public IP Address
+1. (Dynamic) Public IP Address
 1. Cloudflare Account
 1. Domain Name (managed by given Cloudflare Account)
 
