@@ -1,12 +1,13 @@
 #!/bin/bash
 
-PASS_KEY_NAME=p/cloudflare/maketh-dev-edit-zone-token # I used pass to store all my credentials hence.
+# PASS_KEY_NAME=p/cloudflare/maketh-dev-edit-zone-token # I used pass to store all my credentials hence.
 
-API_TOKEN=$(pass show $PASS_KEY_NAME | head -n 1) # CloudFlare API Token
-ZONE_ID=$(pass show $PASS_KEY_NAME | grep '^ZONE_ID=' | head -n 1 | sed 's/^ZONE_ID=//') # CloudFlare Zone ID
-DNS_RECORD_ID=$(pass show $PASS_KEY_NAME | grep '^DNS_RECORD_ID=' | head -n 1 | sed 's/^DNS_RECORD_ID=//') # CloudFlare DNS Record ID
-DNS_RECORD_NAME=$(pass show $PASS_KEY_NAME | grep '^DNS_RECORD_NAME=' | head -n 1 | sed 's/^DNS_RECORD_NAME=//')
+# API_TOKEN=$(pass show $PASS_KEY_NAME | head -n 1) # CloudFlare API Token
+# ZONE_ID=$(pass show $PASS_KEY_NAME | grep '^ZONE_ID=' | head -n 1 | sed 's/^ZONE_ID=//') # CloudFlare Zone ID
+# DNS_RECORD_ID=$(pass show $PASS_KEY_NAME | grep '^DNS_RECORD_ID=' | head -n 1 | sed 's/^DNS_RECORD_ID=//') # CloudFlare DNS Record ID
+# DNS_RECORD_NAME=$(pass show $PASS_KEY_NAME | grep '^DNS_RECORD_NAME=' | head -n 1 | sed 's/^DNS_RECORD_NAME=//')
 TTL=1 # automatic
+source ./variables
 CACHE_FILE="/tmp/last_public_ip_${DNS_RECORD_ID}.txt"
 
 # Get Public IP Address
