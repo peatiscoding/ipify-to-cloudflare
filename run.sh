@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/bin/sh
 
 # PASS_KEY_NAME=p/cloudflare/maketh-dev-edit-zone-token # I used pass to store all my credentials hence.
 
@@ -6,8 +6,13 @@
 # ZONE_ID=$(pass show $PASS_KEY_NAME | grep '^ZONE_ID=' | head -n 1 | sed 's/^ZONE_ID=//') # CloudFlare Zone ID
 # DNS_RECORD_ID=$(pass show $PASS_KEY_NAME | grep '^DNS_RECORD_ID=' | head -n 1 | sed 's/^DNS_RECORD_ID=//') # CloudFlare DNS Record ID
 # DNS_RECORD_NAME=$(pass show $PASS_KEY_NAME | grep '^DNS_RECORD_NAME=' | head -n 1 | sed 's/^DNS_RECORD_NAME=//')
+echo "##############"
+echo $(date)
+echo "##############"
 TTL=1 # automatic
-source ./variables
+BASEDIR=$(dirname $0)
+echo $BASEDIR
+source $BASEDIR/variables
 CACHE_FILE="/tmp/last_public_ip_${DNS_RECORD_ID}.txt"
 
 # Get Public IP Address
@@ -23,10 +28,12 @@ echo "Public IP: $PUBLIC_IP"
 # Get Last Public IP
 if [ -f "$CACHE_FILE" ]; then
 	LAST_PUBLIC_IP=$(cat $CACHE_FILE)
-	if [ "$PUBLIC_IP" == "$LAST_PUBLIC_IP" ]; then
+	echo "Cache Content: $LAST_PUBLIC_IP"
+	# Compare if PUBLIC_IP & LAST_PUBLIC_IP is equal
+	if [ "$PUBLIC_IP" = "$LAST_PUBLIC_IP" ]; then
 		echo "Public IP hasn't changed. (Cached)"
 		echo "> To clear cache simply rm $CACHE_FILE"
-		exit 0
+		exit
 	fi
 fi
 
@@ -35,7 +42,7 @@ echo "Updating IP Address for $DNS_RECORD_NAME to $PUBLIC_IP."
 # Update DNS Records to CloudFlare
 # REF: https://developers.cloudflare.com/api/operations/dns-records-for-a-zone-update-dns-record
 RESPONSE=$(curl -s -X PUT "https://api.cloudflare.com/client/v4/zones/$ZONE_ID/dns_records/$DNS_RECORD_ID" \
-	-H "Authorization: Bearer $API_TOKEN" \
+        -H "Authorization: $API_TOKEN" \
 	-H "Content-Type: application/json" \
 	--data "{\"type\":\"A\",\"name\":\"$DNS_RECORD_NAME\",\"content\":\"$PUBLIC_IP\",\"ttl\":$TTL,\"proxied\":false,\"comment\":\"updated by crontab\"}")
 
